@@ -139,7 +139,7 @@ export default function AttemptExam() {
   };
 
   useEffect(() => {
-    (async () => {
+    (async () => { 
       try {
         const list = await QuestionAPI.listForExam(examId);
         setQuestions(list);
