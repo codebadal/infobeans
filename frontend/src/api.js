@@ -72,6 +72,7 @@ export const ExamAPI = {
 export const QuestionAPI = {
   add: (payload) => api('/api/questions', { method: 'POST', body: payload, auth: true }),
   listForExam: (examId) => api(`/api/questions/exam/${examId}`, { auth: true }),
+  update: (id,payload) => api(`/api/questions/${id}`, {method: 'put', body: payload, auth: true }),
   delete: (id) => api(`/api/questions/${id}`, { method: 'DELETE', auth: true }),
 };
 

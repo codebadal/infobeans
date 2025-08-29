@@ -236,15 +236,15 @@
 
 
 
-
-
 import { useEffect, useState } from "react";
 import { AdminAPI } from "../api.js";
 import { toast } from "../utils/toast.js";
 
+// react-icons
+import { FiUsers, FiUserCheck, FiUserPlus, FiSettings, FiEdit, FiTrash2 } from "react-icons/fi";
+
 export default function DashboardAdmin() {
   const [activeTab, setActiveTab] = useState("admins");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [users, setUsers] = useState([]);
   const [form, setForm] = useState({ name: "", email: "", mobile: "", password: "Pass@123" });
   const [edit, setEdit] = useState(null);
@@ -301,9 +301,9 @@ export default function DashboardAdmin() {
   const renderTable = (list, label) => (
     <div>
       <h3 className="text-xl font-bold mb-4">{label} Table</h3>
-      <div className="overflow-x-auto bg-gray-800 shadow-lg rounded-lg">
-        <table className="min-w-full divide-y divide-gray-700 text-sm">
-          <thead className="bg-gray-700 text-gray-300">
+      <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200 text-sm">
+          <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="px-4 py-2 text-left">Name</th>
               <th className="px-4 py-2 text-left">Email</th>
@@ -313,26 +313,26 @@ export default function DashboardAdmin() {
               <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-gray-200">
             {list.map((u) => (
-              <tr key={u._id} className="hover:bg-gray-700 transition">
+              <tr key={u._id} className="hover:bg-gray-50 transition">
                 <td className="px-4 py-2">{u.name}</td>
                 <td className="px-4 py-2">{u.email}</td>
                 <td className="px-4 py-2 capitalize">{u.role}</td>
                 <td className="px-4 py-2">{u.status}</td>
                 <td className="px-4 py-2">{u.mobile}</td>
-                <td className="px-4 py-2 space-x-2">
+                <td className="px-4 py-2 space-x-2 flex">
                   <button
                     onClick={() => setEdit(u)}
-                    className="px-3 py-1 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded"
+                    className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400"
                   >
-                    Edit
+                    <FiEdit /> Edit
                   </button>
                   <button
                     onClick={() => del(u._id)}
-                    className="px-3 py-1 text-xs bg-red-600 hover:bg-red-700 text-white rounded"
+                    className="flex items-center gap-1 px-3 py-1 text-xs bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300"
                   >
-                    Delete
+                    <FiTrash2 /> Delete
                   </button>
                 </td>
               </tr>
@@ -352,36 +352,36 @@ export default function DashboardAdmin() {
 
   // Create form renderer
   const renderCreateForm = (role, label) => (
-    <div className="bg-gray-800 shadow-lg rounded-lg p-6 max-w-md mx-auto">
-      <h3 className="text-lg font-semibold mb-4">➕ Create {label}</h3>
+    <div className="bg-white shadow-lg rounded-lg p-6 max-w-md border border-gray-200">
+      <h3 className="text-lg font-semibold mb-4"><FiUserPlus className="inline mr-2"/> Create {label}</h3>
       <form
         onSubmit={(e) => { e.preventDefault(); create(role); }}
         className="space-y-3"
       >
         <input placeholder="Name"
-          className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+          className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           required
         />
         <input placeholder="Email"
-          className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+          className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
         <input placeholder="Mobile"
-          className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+          className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.mobile}
           onChange={(e) => setForm({ ...form, mobile: e.target.value })}
           required
         />
         <input placeholder="Password"
-          className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+          className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
         />
-        <button className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded">
+        <button className="w-full bg-red-700 text-white shadow-md rounded px-4 py-2 hover:shadow-lg hover:shadow-red-300">
           Create
         </button>
       </form>
@@ -389,59 +389,40 @@ export default function DashboardAdmin() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-gray-200">
+    <div className="flex min-h-screen bg-[#fdf7f2] text-gray-800">
       {/* Sidebar */}
-      <aside
-        className={`fixed z-40 inset-y-0 left-0 w-64 bg-gray-800 border-r border-gray-700 p-5 transform transition-transform md:relative md:translate-x-0
-        ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
-      >
-        <h2 className="text-xl font-bold mb-6">⚙️ Admin Dashboard</h2>
+      <aside className="w-64 bg-white p-5 border-r border-gray-200 hidden md:block">
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><FiSettings /> Admin Dashboard</h2>
         <nav className="space-y-2">
-          <button onClick={() => { setActiveTab("admins"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "admins" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            🛠 Admins Table
+          <button onClick={() => setActiveTab("admins")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "admins" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUsers /> Admins Table
           </button>
-          <button onClick={() => { setActiveTab("students"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "students" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            🎓 Students Table
+          <button onClick={() => setActiveTab("students")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "students" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUserCheck /> Students Table
           </button>
-          <button onClick={() => { setActiveTab("trainers"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "trainers" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            🏋️ Trainers Table
+          <button onClick={() => setActiveTab("trainers")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "trainers" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUserCheck /> Trainers Table
           </button>
-          <button onClick={() => { setActiveTab("createStudent"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "createStudent" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            ➕ Create Student
+          <button onClick={() => setActiveTab("createStudent")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createStudent" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUserPlus /> Create Student
           </button>
-          <button onClick={() => { setActiveTab("createTrainer"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "createTrainer" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            ➕ Create Trainer
+          <button onClick={() => setActiveTab("createTrainer")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createTrainer" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUserPlus /> Create Trainer
           </button>
-          <button onClick={() => { setActiveTab("createAdmin"); setSidebarOpen(false); }}
-            className={`w-full text-left px-3 py-2 rounded-lg ${activeTab === "createAdmin" ? "bg-indigo-600 text-white" : "hover:bg-gray-700"}`}>
-            ➕ Create Admin
+          <button onClick={() => setActiveTab("createAdmin")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createAdmin" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+            <FiUserPlus /> Create Admin
           </button>
         </nav>
       </aside>
 
-      {/* Overlay for mobile */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black opacity-50 z-30 md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       {/* Main Content */}
-      <main className="flex-1 p-6 ml-0 md:ml-64 space-y-6">
-        {/* Hamburger for mobile */}
-        <button
-          className="md:hidden mb-4 bg-gray-800 px-3 py-2 rounded shadow"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          ☰ Menu
-        </button>
-
+      <main className="flex-1 p-6 space-y-6">
         {activeTab === "admins" && renderTable(admins, "Admins")}
         {activeTab === "students" && renderTable(students, "Students")}
         {activeTab === "trainers" && renderTable(trainers, "Trainers")}
@@ -451,27 +432,31 @@ export default function DashboardAdmin() {
 
         {/* Edit Form */}
         {edit && (
-          <form onSubmit={update} className="bg-gray-800 shadow-lg rounded-lg p-6 mt-6 space-y-3 max-w-md mx-auto">
-            <h4 className="text-lg font-semibold">✏️ Edit User</h4>
-            <input className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+          <form onSubmit={update} className="bg-white shadow-lg rounded-lg p-6 mt-6 space-y-3 max-w-md border border-gray-200">
+            <h4 className="text-lg font-semibold flex items-center gap-2"><FiEdit /> Edit User</h4>
+            <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
               value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} />
-            <input className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+            <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
               value={edit.mobile} onChange={(e) => setEdit({ ...edit, mobile: e.target.value })} />
-            <select className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+            <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
               value={edit.role} onChange={(e) => setEdit({ ...edit, role: e.target.value })}>
               <option value="student">student</option>
               <option value="trainer">trainer</option>
               <option value="admin">admin</option>
             </select>
-            <select className="bg-gray-900 border border-gray-700 px-3 py-2 rounded w-full"
+            <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
               value={edit.status} onChange={(e) => setEdit({ ...edit, status: e.target.value })}>
               <option value="pending">pending</option>
               <option value="active">active</option>
               <option value="blocked">blocked</option>
             </select>
             <div className="flex space-x-3">
-              <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded">Save</button>
-              <button type="button" onClick={() => setEdit(null)} className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded text-white">Cancel</button>
+              <button className="flex items-center gap-1 px-4 py-2 bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400">
+                <FiEdit /> Save
+              </button>
+              <button type="button" onClick={() => setEdit(null)} className="flex items-center gap-1 px-4 py-2 bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300">
+                Cancel
+              </button>
             </div>
           </form>
         )}
@@ -479,3 +464,4 @@ export default function DashboardAdmin() {
     </div>
   );
 }
+

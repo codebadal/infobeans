@@ -74,21 +74,24 @@ export default function NavBar() {
           </Link>
 
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-gray-50 hover:text-indigo-600">
+            <Link to="/" className="text-gray-50 hover:text-red-500">
               Home
+            </Link>
+            <Link to="/about" className="text-gray-50 hover:text-red-500">
+              About-Us
             </Link>
 
             {!user && (
               <>
                 <Link
                   to="/login"
-                  className="text-gray-50 hover:text-indigo-600"
+                  className="text-gray-50 hover:text-red-500"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="text-gray-50 hover:text-indigo-600"
+                  className="text-gray-50 hover:text-red-500"
                 >
                   Register
                 </Link>
@@ -98,7 +101,7 @@ export default function NavBar() {
             {user?.role === "student" && (
               <Link
                 to="/student"
-                className="text-gray-50 hover:text-indigo-600"
+                className="text-gray-50 hover:text-red-500"
               >
                 Student
               </Link>
@@ -106,20 +109,21 @@ export default function NavBar() {
             {user?.role === "trainer" && (
               <Link
                 to="/trainer"
-                className="text-gray-50 hover:text-indigo-600"
+                className="text-gray-50 hover:text-red-500"
               >
                 Trainer
               </Link>
             )}
             {user?.role === "admin" && (
-              <Link to="/admin" className="text-gray-50 hover:text-indigo-600">
+              <Link to="/admin" className="text-gray-50 hover:text-red-500">
                 Admin
               </Link>
             )}
-            {(user?.role === "trainer" || user?.role === "admin") && (
+            {/* user?.role === "trainer" ||  */}
+            {(user?.role === "admin") && (
               <Link
                 to="/batches"
-                className="text-gray-50 hover:text-indigo-600"
+                className="text-gray-50 hover:text-red-500"
               >
                 Batches
               </Link>
@@ -128,7 +132,7 @@ export default function NavBar() {
             {user && (
               <button
                 onClick={logout}
-                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-indigo-700 transition"
+                className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-500 transition"
               >
                 Logout ({user.role})
               </button>
@@ -139,3 +143,20 @@ export default function NavBar() {
     </header>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

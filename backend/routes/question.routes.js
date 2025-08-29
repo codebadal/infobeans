@@ -29,7 +29,7 @@ router.post('/', protect, authorizeRoles('trainer', 'admin'), addQuestion);
 // Get all questions of an exam (students won't see answers in controller)
 router.get('/exam/:examId', protect, getQuestionsForExam);
 
-// Update a question
+// Update a question 
 router.put('/:id', protect, authorizeRoles('trainer', 'admin'), updateQuestion);
 
 // Delete a question
