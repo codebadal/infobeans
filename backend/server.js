@@ -11,9 +11,10 @@ import questionRoutes from './routes/question.routes.js';
 import submissionRoutes from './routes/submission.routes.js';
 import batchRoutes from './routes/batch.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
+import geminiRoutus from './routes/ai.routes.js';
 
 import { errorHandler } from './middleware/error.middleware.js';
-
+ 
 dotenv.config();
 connectDB();
 
@@ -40,6 +41,10 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/batches', batchRoutes);
 app.use('/api/payments', paymentRoutes);
+
+
+// ai 
+app.use('/api/gemini', geminiRoutus)
 
 // root
 app.get('/', (req, res) => res.send('Exam Portal API'));

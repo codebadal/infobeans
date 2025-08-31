@@ -1,118 +1,3 @@
-// import { useEffect, useState } from "react";
-// import { useParams, useNavigate } from "react-router-dom";
-// import { QuestionAPI, SubmissionAPI } from "../api.js";
-// import { toast } from "../utils/toast.js";
-
-// export default function AttemptExam() {
-//   const { examId } = useParams();
-//   const nav = useNavigate();
-//   const [questions, setQuestions] = useState([]);
-//   const [answers, setAnswers] = useState({});
-
-//   useEffect(() => {
-//     (async () => {
-//       try {
-//         setQuestions(await QuestionAPI.listForExam(examId));
-//       } catch (e) {
-//         toast.err(e);
-//       }
-//     })();
-//   }, [examId]);
-
-//   const submit = async () => {
-//     try {
-//       const payload = {
-//         examId,
-//         answers: Object.entries(answers).map(([qid, ans]) => ({
-//           questionId: qid,
-//           answer: ans,
-//         })),
-//       };
-//       await SubmissionAPI.submit(payload);
-//       alert("Submitted. Check your result in submissions.");
-//       nav("/student");
-//     } catch (e) {
-//       toast.err(e);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-900 text-gray-100 py-10 px-4">
-//       <div className="max-w-3xl mx-auto bg-gray-800 shadow-lg rounded-xl p-8 border border-gray-700">
-//         <h3 className="text-2xl font-bold text-blue-400 mb-6 text-center">
-//           Attempt Exam
-//         </h3>
-
-//         {questions.map((q, idx) => (
-//           <div
-//             key={q._id}
-//             className="mb-6 p-5 border border-gray-700 rounded-lg bg-gray-700/50"
-//           >
-//             <div className="font-medium text-gray-100 mb-3">
-//               <span className="font-bold text-green-400">Q{idx + 1}:</span>{" "}
-//               {q.text}{" "}
-//               <span className="text-sm text-gray-400">({q.marks} marks)</span>
-//             </div>
-
-//             {q.type === "mcq" ? (
-//               <div className="space-y-2">
-//                 {q.options.map((opt) => (
-//                   <label
-//                     key={opt}
-//                     className="flex items-center space-x-2 cursor-pointer text-gray-200 hover:text-white"
-//                   >
-//                     <input
-//                       type="radio"
-//                       name={`q_${q._id}`}
-//                       value={opt}
-//                       onChange={(e) =>
-//                         setAnswers((a) => ({ ...a, [q._id]: e.target.value }))
-//                       }
-//                       className="text-blue-500 focus:ring-blue-400"
-//                     />
-//                     <span>{opt}</span>
-//                   </label>
-//                 ))}
-//               </div>
-//             ) : (
-//               <textarea
-//                 onChange={(e) =>
-//                   setAnswers((a) => ({ ...a, [q._id]: e.target.value }))
-//                 }
-//                 className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 mt-2 focus:ring-2 focus:ring-blue-500 outline-none text-gray-100 placeholder-gray-400"
-//                 rows={4}
-//                 placeholder="Type your answer here..."
-//               />
-//             )}
-//           </div>
-//         ))}
-
-//         {questions.length > 0 && (
-//           <button
-//             onClick={submit}
-//             className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition shadow"
-//           >
-//             Submit Exam
-//           </button>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { QuestionAPI, SubmissionAPI } from "../api.js";
@@ -129,7 +14,7 @@ export default function AttemptExam() {
   const [warnings, setWarnings] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  const deadlineRef = useRef(Date.now() + 60 * 60 * 1000);
+  const deadlineRef = useRef(null);
   const hasSubmittedRef = useRef(false);
   const intervalRef = useRef(null);
 
@@ -138,8 +23,9 @@ export default function AttemptExam() {
     else alert(msg);
   };
 
+  // ✅ Load questions
   useEffect(() => {
-    (async () => { 
+    (async () => {
       try {
         const list = await QuestionAPI.listForExam(examId);
         setQuestions(list);
@@ -149,13 +35,34 @@ export default function AttemptExam() {
     })();
   }, [examId]);
 
+  // ✅ Load deadline + answers from localStorage (if exist)
   useEffect(() => {
-    deadlineRef.current = Date.now() + 60 * 60 * 1000;
-    setTimeLeft(60 * 60);
+    const savedDeadline = localStorage.getItem(`exam_deadline_${examId}`);
+    const savedAnswers = localStorage.getItem(`exam_answers_${examId}`);
+
+    if (savedDeadline) {
+      deadlineRef.current = parseInt(savedDeadline, 10);
+    } else {
+      deadlineRef.current = Date.now() + 60 * 60 * 1000;
+      localStorage.setItem(`exam_deadline_${examId}`, deadlineRef.current);
+    }
+
+    if (savedAnswers) {
+      setAnswers(JSON.parse(savedAnswers));
+    }
+
     setWarnings(0);
     hasSubmittedRef.current = false;
   }, [examId]);
 
+  // ✅ Save answers to localStorage
+  const handleAnswerChange = (qid, val) => {
+    const updated = { ...answers, [qid]: val };
+    setAnswers(updated);
+    localStorage.setItem(`exam_answers_${examId}`, JSON.stringify(updated));
+  };
+
+  // ✅ Safe submit
   const safeSubmit = useCallback(async () => {
     if (hasSubmittedRef.current || submitting) return;
     hasSubmittedRef.current = true;
@@ -170,6 +77,11 @@ export default function AttemptExam() {
         warnings,
       };
       await SubmissionAPI.submit(payload);
+
+      // Clear saved data after submit
+      localStorage.removeItem(`exam_deadline_${examId}`);
+      localStorage.removeItem(`exam_answers_${examId}`);
+
       alert("✅ Submitted! Check your results in Submissions.");
       nav("/student");
     } catch (e) {
@@ -179,6 +91,7 @@ export default function AttemptExam() {
     }
   }, [answers, examId, nav, warnings, submitting]);
 
+  // ✅ Timer effect
   useEffect(() => {
     const tick = () => {
       const secs = Math.max(
@@ -196,6 +109,7 @@ export default function AttemptExam() {
     return () => clearInterval(intervalRef.current);
   }, [safeSubmit]);
 
+  // ✅ Visibility warning
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -275,9 +189,8 @@ export default function AttemptExam() {
                       type="radio"
                       name={`q_${q._id}`}
                       value={opt}
-                      onChange={(e) =>
-                        setAnswers((a) => ({ ...a, [q._id]: e.target.value }))
-                      }
+                      checked={answers[q._id] === opt}
+                      onChange={(e) => handleAnswerChange(q._id, e.target.value)}
                       className="text-red-700 focus:ring-red-600"
                     />
                     <span>{opt}</span>
@@ -286,9 +199,8 @@ export default function AttemptExam() {
               </div>
             ) : (
               <textarea
-                onChange={(e) =>
-                  setAnswers((a) => ({ ...a, [q._id]: e.target.value }))
-                }
+                value={answers[q._id] || ""}
+                onChange={(e) => handleAnswerChange(q._id, e.target.value)}
                 className="w-full bg-white border border-gray-300 rounded-lg p-3 mt-2 focus:ring-2 focus:ring-red-600 outline-none text-gray-800 placeholder-gray-400"
                 rows={4}
                 placeholder="Type your answer here..."
