@@ -31,7 +31,8 @@ app.use(cors())
 // app.options("*", cors());
 
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(morgan('dev')); // for console log every requers
+
 
 // routes
 app.use('/api/auth', authRoutes);

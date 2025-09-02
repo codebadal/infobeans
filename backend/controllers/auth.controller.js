@@ -11,8 +11,9 @@ import { sendMail } from '../utils/mail.util.js';
 const registerSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  mobile: z.string().min(6),
-  password: z.string().min(6) 
+  mobile: z.string().min(10),
+  // mobile: z.string().min(6),
+  password: z.string().min(6)
 });
 
 // export const register = async (req, res, next) => {
@@ -87,13 +88,13 @@ export const register = async (req, res, next) => {
     if (exists) return res.status(409).json({ message: 'Email already registered' });
 
     const salt = await bcrypt.genSalt(10);
-    const hashed = await bcrypt.hash(password, salt); 
+    const hashed = await bcrypt.hash(password, salt);
 
     // OTP generate 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     // user create with pending + not verified
-    const user = await User.create({ 
+    const user = await User.create({
       name,
       email,
       mobile,

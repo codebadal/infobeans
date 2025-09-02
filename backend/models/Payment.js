@@ -11,3 +11,14 @@ const paymentSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.model('Payment', paymentSchema);
+
+
+
+// User 1 ───< Batch (trainer)
+// User * ───< Batch.students
+// User 1 ───< Exam.createdBy
+// User 1 ───< Payment.user
+// User 1 ───< Submission.student
+
+// Exam 1 ───< Question.exam
+// Exam 1 ───< Submission.exam

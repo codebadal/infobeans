@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(protect);
 router.use(authorizeRoles('admin'));
 
-router.get('/users', listUsers); // ?role=student|trainer
+router.get('/users', listUsers); // role=student|trainer
 router.get('/users/:id', getUser);
 router.post('/users', createUser);
 router.put('/users/:id', updateUser);

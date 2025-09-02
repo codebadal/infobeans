@@ -1,25 +1,285 @@
+// import { useEffect, useState } from "react";
+// import { AdminAPI } from "../api.js";
+// import { toast } from "../utils/toast.js";
+
+// // react-icons
+// import { FiUsers, FiUserCheck, FiUserPlus, FiSettings, FiEdit, FiTrash2 } from "react-icons/fi";
+
+// export default function DashboardAdmin() {
+//   const [activeTab, setActiveTab] = useState("admins");
+//   const [users, setUsers] = useState([]);
+//   const [form, setForm] = useState({ name: "", email: "", mobile: "", password: "Pass@123" });
+//   const [edit, setEdit] = useState(null);
+
+//   // Load all users
+//   const load = async () => {
+//     try {
+//       const res = await AdminAPI.listUsers();
+//       setUsers(res);
+//     } catch (e) { toast.err(e); }
+//   };
+
+//   useEffect(() => { load(); }, []);
+
+//   // Create user
+//   const create = async (role) => {
+//     try {
+//       await AdminAPI.createUser({ ...form, role });
+//       toast.ok(`${role} created`);
+//       setForm({ name: "", email: "", mobile: "", password: "Pass@123" });
+//       load();
+//     } catch (e) { toast.err(e); }
+//   };
+
+//   // Update user
+//   const update = async (e) => {
+//     e.preventDefault();
+//     try {
+//       await AdminAPI.updateUser(edit._id, {
+//         name: edit.name,
+//         mobile: edit.mobile,
+//         role: edit.role,
+//         status: edit.status,
+//       });
+//       toast.ok("Updated");
+//       setEdit(null);
+//       load();
+//     } catch (e) { toast.err(e); }
+//   };
+
+//   // Delete user
+//   const del = async (id) => {
+//     if (!confirm("Delete user?")) return;
+//     try { await AdminAPI.deleteUser(id); toast.ok("Deleted"); load(); }
+//     catch (e) { toast.err(e); }
+//   };
+
+//   // Filtered lists
+//   const admins = users.filter((u) => u.role === "admin");
+//   const students = users.filter((u) => u.role === "student");
+//   const trainers = users.filter((u) => u.role === "trainer");
+
+//   // Table renderer
+//   const renderTable = (list, label) => (
+//     <div>
+//       <h3 className="text-xl font-bold mb-4">{label} Table</h3>
+//       <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
+//         <table className="min-w-full divide-y divide-gray-200 text-sm">
+//           <thead className="bg-gray-100 text-gray-700">
+//             <tr>
+//               <th className="px-4 py-2 text-left">Name</th>
+//               <th className="px-4 py-2 text-left">Email</th>
+//               <th className="px-4 py-2 text-left">Role</th>
+//               <th className="px-4 py-2 text-left">Status</th>
+//               <th className="px-4 py-2 text-left">Mobile</th>
+//               <th className="px-4 py-2 text-left">Actions</th>
+//             </tr>
+//           </thead>
+//           <tbody className="divide-y divide-gray-200">
+//             {list.map((u) => (
+//               <tr key={u._id} className="hover:bg-gray-50 transition">
+//                 <td className="px-4 py-2">{u.name}</td>
+//                 <td className="px-4 py-2">{u.email}</td>
+//                 <td className="px-4 py-2 capitalize">{u.role}</td>
+//                 <td className="px-4 py-2">{u.status}</td>
+//                 <td className="px-4 py-2">{u.mobile}</td>
+//                 <td className="px-4 py-2 space-x-2 flex">
+//                   <button
+//                     onClick={() => setEdit(u)}
+//                     className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400"
+//                   >
+//                     <FiEdit /> Edit
+//                   </button>
+//                   <button
+//                     onClick={() => del(u._id)}
+//                     className="flex items-center gap-1 px-3 py-1 text-xs bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300"
+//                   >
+//                     <FiTrash2 /> Delete
+//                   </button>
+//                 </td>
+//               </tr>
+//             ))}
+//             {list.length === 0 && (
+//               <tr>
+//                 <td colSpan={6} className="text-center py-4 text-gray-400 italic">
+//                   No users found
+//                 </td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+//     </div>
+//   );
+
+//   // Create form renderer
+//   const renderCreateForm = (role, label) => (
+//     <div className="bg-white shadow-lg rounded-lg p-6 max-w-md border border-gray-200">
+//       <h3 className="text-lg font-semibold mb-4"><FiUserPlus className="inline mr-2"/> Create {label}</h3>
+//       <form
+//         onSubmit={(e) => { e.preventDefault(); create(role); }}
+//         className="space-y-3"
+//       >
+//         <input placeholder="Name"
+//           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//           value={form.name}
+//           onChange={(e) => setForm({ ...form, name: e.target.value })}
+//           required
+//         />
+//         <input placeholder="Email"
+//           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//           value={form.email}
+//           onChange={(e) => setForm({ ...form, email: e.target.value })}
+//           required
+//         />
+//         <input placeholder="Mobile"
+//           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//           value={form.mobile}
+//           onChange={(e) => setForm({ ...form, mobile: e.target.value })}
+//           required
+//         />
+//         <input placeholder="Password"
+//           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//           value={form.password}
+//           onChange={(e) => setForm({ ...form, password: e.target.value })}
+//         />
+//         <button className="w-full bg-red-700 text-white shadow-md rounded px-4 py-2 hover:shadow-lg hover:shadow-red-300">
+//           Create
+//         </button>
+//       </form>
+//     </div>
+//   );
+
+//   return (
+//     <div className="flex min-h-screen bg-[#fdf7f2] text-gray-800">
+//       {/* Sidebar */}
+//       <aside className="w-64 bg-white p-5 border-r border-gray-200 hidden md:block">
+//         <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><FiSettings /> Admin Dashboard</h2>
+//         <nav className="space-y-2">
+//           <button onClick={() => setActiveTab("admins")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "admins" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUsers /> Admins
+//           </button>
+//           <button onClick={() => setActiveTab("students")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "students" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUserCheck /> Students
+//           </button>
+//           <button onClick={() => setActiveTab("trainers")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "trainers" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUserCheck /> Trainers
+//           </button>
+//           <button onClick={() => setActiveTab("createStudent")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createStudent" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUserPlus /> Create Student
+//           </button>
+//           <button onClick={() => setActiveTab("createTrainer")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createTrainer" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUserPlus /> Create Trainer
+//           </button>
+//           <button onClick={() => setActiveTab("createAdmin")}
+//             className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createAdmin" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+//             <FiUserPlus /> Create Admin
+//           </button>
+//         </nav>
+//       </aside>
+
+//       {/* Main Content */}
+//       <main className="flex-1 p-6 space-y-6">
+//         {activeTab === "admins" && renderTable(admins, "Admins")}
+//         {activeTab === "students" && renderTable(students, "Students")}
+//         {activeTab === "trainers" && renderTable(trainers, "Trainers")}
+//         {activeTab === "createStudent" && renderCreateForm("student", "Student")}
+//         {activeTab === "createTrainer" && renderCreateForm("trainer", "Trainer")}
+//         {activeTab === "createAdmin" && renderCreateForm("admin", "Admin")}
+
+//         {/* Edit Form */}
+//         {edit && (
+//           <form onSubmit={update} className="bg-white shadow-lg rounded-lg p-6 mt-6 space-y-3 max-w-md border border-gray-200">
+//             <h4 className="text-lg font-semibold flex items-center gap-2"><FiEdit /> Edit User</h4>
+//             <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//               value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} />
+//             <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//               value={edit.mobile} onChange={(e) => setEdit({ ...edit, mobile: e.target.value })} />
+//             <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//               value={edit.role} onChange={(e) => setEdit({ ...edit, role: e.target.value })}>
+//               <option value="student">student</option>
+//               <option value="trainer">trainer</option>
+//               <option value="admin">admin</option>
+//             </select>
+//             <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+//               value={edit.status} onChange={(e) => setEdit({ ...edit, status: e.target.value })}>
+//               <option value="pending">pending</option>
+//               <option value="active">active</option>
+//               <option value="blocked">blocked</option>
+//             </select>
+//             <div className="flex space-x-3">
+//               <button className="flex items-center gap-1 px-4 py-2 bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400">
+//                 <FiEdit /> Save
+//               </button>
+//               <button type="button" onClick={() => setEdit(null)} className="flex items-center gap-1 px-4 py-2 bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300">
+//                 Cancel
+//               </button>
+//             </div>
+//           </form>
+//         )}
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { AdminAPI } from "../api.js";
 import { toast } from "../utils/toast.js";
+import SearchBox from "./SearchBox"; // 👈 import SearchBox
 
 // react-icons
-import { FiUsers, FiUserCheck, FiUserPlus, FiSettings, FiEdit, FiTrash2 } from "react-icons/fi";
+import {
+  FiUsers,
+  FiUserCheck,
+  FiUserPlus,
+  FiSettings,
+  FiEdit,
+  FiTrash2,
+} from "react-icons/fi";
 
 export default function DashboardAdmin() {
   const [activeTab, setActiveTab] = useState("admins");
   const [users, setUsers] = useState([]);
-  const [form, setForm] = useState({ name: "", email: "", mobile: "", password: "Pass@123" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    password: "Pass@123",
+  });
   const [edit, setEdit] = useState(null);
+  const [search, setSearch] = useState(""); // 🔍 new state
 
   // Load all users
   const load = async () => {
     try {
       const res = await AdminAPI.listUsers();
       setUsers(res);
-    } catch (e) { toast.err(e); }
+    } catch (e) {
+      toast.err(e);
+    }
   };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   // Create user
   const create = async (role) => {
@@ -28,7 +288,9 @@ export default function DashboardAdmin() {
       toast.ok(`${role} created`);
       setForm({ name: "", email: "", mobile: "", password: "Pass@123" });
       load();
-    } catch (e) { toast.err(e); }
+    } catch (e) {
+      toast.err(e);
+    }
   };
 
   // Update user
@@ -44,14 +306,21 @@ export default function DashboardAdmin() {
       toast.ok("Updated");
       setEdit(null);
       load();
-    } catch (e) { toast.err(e); }
+    } catch (e) {
+      toast.err(e);
+    }
   };
 
   // Delete user
   const del = async (id) => {
     if (!confirm("Delete user?")) return;
-    try { await AdminAPI.deleteUser(id); toast.ok("Deleted"); load(); }
-    catch (e) { toast.err(e); }
+    try {
+      await AdminAPI.deleteUser(id);
+      toast.ok("Deleted");
+      load();
+    } catch (e) {
+      toast.err(e);
+    }
   };
 
   // Filtered lists
@@ -59,86 +328,115 @@ export default function DashboardAdmin() {
   const students = users.filter((u) => u.role === "student");
   const trainers = users.filter((u) => u.role === "trainer");
 
+  // Apply search filter
+  const filterBySearch = (list) => {
+    if (!search.trim()) return list;
+    return list.filter((u) =>
+      [u.name, u.email, u.mobile].some((field) =>
+        field?.toLowerCase().includes(search.toLowerCase())
+      )
+    );
+  };
+
   // Table renderer
-  const renderTable = (list, label) => (
-    <div>
-      <h3 className="text-xl font-bold mb-4">{label} Table</h3>
-      <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200 text-sm">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Role</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Mobile</th>
-              <th className="px-4 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {list.map((u) => (
-              <tr key={u._id} className="hover:bg-gray-50 transition">
-                <td className="px-4 py-2">{u.name}</td>
-                <td className="px-4 py-2">{u.email}</td>
-                <td className="px-4 py-2 capitalize">{u.role}</td>
-                <td className="px-4 py-2">{u.status}</td>
-                <td className="px-4 py-2">{u.mobile}</td>
-                <td className="px-4 py-2 space-x-2 flex">
-                  <button
-                    onClick={() => setEdit(u)}
-                    className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400"
-                  >
-                    <FiEdit /> Edit
-                  </button>
-                  <button
-                    onClick={() => del(u._id)}
-                    className="flex items-center gap-1 px-3 py-1 text-xs bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300"
-                  >
-                    <FiTrash2 /> Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {list.length === 0 && (
+  const renderTable = (list, label) => {
+    const filteredList = filterBySearch(list);
+    return (
+      <div>
+        <h3 className="text-xl font-bold mb-4">{label} Table</h3>
+
+        {/* 🔍 SearchBox Component */}
+        <SearchBox onSearch={setSearch} placeholder={`Search ${label}...`} />
+
+        <div className="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-100 text-gray-700">
               <tr>
-                <td colSpan={6} className="text-center py-4 text-gray-400 italic">
-                  No users found
-                </td>
+                <th className="px-4 py-2 text-left">Name</th>
+                <th className="px-4 py-2 text-left">Email</th>
+                <th className="px-4 py-2 text-left">Role</th>
+                <th className="px-4 py-2 text-left">Status</th>
+                <th className="px-4 py-2 text-left">Mobile</th>
+                <th className="px-4 py-2 text-left">Actions</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {filteredList.map((u) => (
+                <tr key={u._id} className="hover:bg-gray-50 transition">
+                  <td className="px-4 py-2">{u.name}</td>
+                  <td className="px-4 py-2">{u.email}</td>
+                  <td className="px-4 py-2 capitalize">{u.role}</td>
+                  <td className="px-4 py-2">{u.status}</td>
+                  <td className="px-4 py-2">{u.mobile}</td>
+                  <td className="px-4 py-2 space-x-2 flex">
+                    <button
+                      onClick={() => setEdit(u)}
+                      className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400"
+                    >
+                      <FiEdit /> Edit
+                    </button>
+                    <button
+                      onClick={() => del(u._id)}
+                      className="flex items-center gap-1 px-3 py-1 text-xs bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300"
+                    >
+                      <FiTrash2 /> Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {filteredList.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="text-center py-4 text-gray-400 italic"
+                  >
+                    No users found
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   // Create form renderer
   const renderCreateForm = (role, label) => (
     <div className="bg-white shadow-lg rounded-lg p-6 max-w-md border border-gray-200">
-      <h3 className="text-lg font-semibold mb-4"><FiUserPlus className="inline mr-2"/> Create {label}</h3>
+      <h3 className="text-lg font-semibold mb-4">
+        <FiUserPlus className="inline mr-2" /> Create {label}
+      </h3>
       <form
-        onSubmit={(e) => { e.preventDefault(); create(role); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          create(role);
+        }}
         className="space-y-3"
       >
-        <input placeholder="Name"
+        <input
+          placeholder="Name"
           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.name}
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           required
         />
-        <input placeholder="Email"
+        <input
+          placeholder="Email"
           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.email}
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           required
         />
-        <input placeholder="Mobile"
+        <input
+          placeholder="Mobile"
           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.mobile}
           onChange={(e) => setForm({ ...form, mobile: e.target.value })}
           required
         />
-        <input placeholder="Password"
+        <input
+          placeholder="Password"
           className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
           value={form.password}
           onChange={(e) => setForm({ ...form, password: e.target.value })}
@@ -154,30 +452,68 @@ export default function DashboardAdmin() {
     <div className="flex min-h-screen bg-[#fdf7f2] text-gray-800">
       {/* Sidebar */}
       <aside className="w-64 bg-white p-5 border-r border-gray-200 hidden md:block">
-        <h2 className="text-xl font-bold mb-6 flex items-center gap-2"><FiSettings /> Admin Dashboard</h2>
+        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+          <FiSettings /> Admin Dashboard
+        </h2>
         <nav className="space-y-2">
-          <button onClick={() => setActiveTab("admins")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "admins" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
-            <FiUsers /> Admins Table
+          <button
+            onClick={() => setActiveTab("admins")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "admins"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            <FiUsers /> Admins
           </button>
-          <button onClick={() => setActiveTab("students")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "students" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
-            <FiUserCheck /> Students Table
+          <button
+            onClick={() => setActiveTab("students")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "students"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            <FiUserCheck /> Students
           </button>
-          <button onClick={() => setActiveTab("trainers")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "trainers" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
-            <FiUserCheck /> Trainers Table
+          <button
+            onClick={() => setActiveTab("trainers")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "trainers"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
+            <FiUserCheck /> Trainers
           </button>
-          <button onClick={() => setActiveTab("createStudent")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createStudent" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+          <button
+            onClick={() => setActiveTab("createStudent")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "createStudent"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
             <FiUserPlus /> Create Student
           </button>
-          <button onClick={() => setActiveTab("createTrainer")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createTrainer" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+          <button
+            onClick={() => setActiveTab("createTrainer")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "createTrainer"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
             <FiUserPlus /> Create Trainer
           </button>
-          <button onClick={() => setActiveTab("createAdmin")}
-            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${activeTab === "createAdmin" ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400" : "hover:bg-gray-100"}`}>
+          <button
+            onClick={() => setActiveTab("createAdmin")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg ${
+              activeTab === "createAdmin"
+                ? "bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400"
+                : "hover:bg-gray-100"
+            }`}
+          >
             <FiUserPlus /> Create Admin
           </button>
         </nav>
@@ -194,20 +530,37 @@ export default function DashboardAdmin() {
 
         {/* Edit Form */}
         {edit && (
-          <form onSubmit={update} className="bg-white shadow-lg rounded-lg p-6 mt-6 space-y-3 max-w-md border border-gray-200">
-            <h4 className="text-lg font-semibold flex items-center gap-2"><FiEdit /> Edit User</h4>
-            <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
-              value={edit.name} onChange={(e) => setEdit({ ...edit, name: e.target.value })} />
-            <input className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
-              value={edit.mobile} onChange={(e) => setEdit({ ...edit, mobile: e.target.value })} />
-            <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
-              value={edit.role} onChange={(e) => setEdit({ ...edit, role: e.target.value })}>
+          <form
+            onSubmit={update}
+            className="bg-white shadow-lg rounded-lg p-6 mt-6 space-y-3 max-w-md border border-gray-200"
+          >
+            <h4 className="text-lg font-semibold flex items-center gap-2">
+              <FiEdit /> Edit User
+            </h4>
+            <input
+              className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+              value={edit.name}
+              onChange={(e) => setEdit({ ...edit, name: e.target.value })}
+            />
+            <input
+              className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+              value={edit.mobile}
+              onChange={(e) => setEdit({ ...edit, mobile: e.target.value })}
+            />
+            <select
+              className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+              value={edit.role}
+              onChange={(e) => setEdit({ ...edit, role: e.target.value })}
+            >
               <option value="student">student</option>
               <option value="trainer">trainer</option>
               <option value="admin">admin</option>
             </select>
-            <select className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
-              value={edit.status} onChange={(e) => setEdit({ ...edit, status: e.target.value })}>
+            <select
+              className="bg-gray-50 border border-gray-300 px-3 py-2 rounded w-full"
+              value={edit.status}
+              onChange={(e) => setEdit({ ...edit, status: e.target.value })}
+            >
               <option value="pending">pending</option>
               <option value="active">active</option>
               <option value="blocked">blocked</option>
@@ -216,7 +569,11 @@ export default function DashboardAdmin() {
               <button className="flex items-center gap-1 px-4 py-2 bg-gray-600 text-white shadow-md rounded hover:shadow-lg hover:shadow-gray-400">
                 <FiEdit /> Save
               </button>
-              <button type="button" onClick={() => setEdit(null)} className="flex items-center gap-1 px-4 py-2 bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300">
+              <button
+                type="button"
+                onClick={() => setEdit(null)}
+                className="flex items-center gap-1 px-4 py-2 bg-red-700 text-white shadow-md rounded hover:shadow-lg hover:shadow-red-300"
+              >
                 Cancel
               </button>
             </div>
@@ -226,4 +583,3 @@ export default function DashboardAdmin() {
     </div>
   );
 }
-

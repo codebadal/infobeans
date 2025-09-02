@@ -39,6 +39,7 @@ export default function Register() {
           <form onSubmit={startRegistration} className="space-y-4">
             <input
               type="text"
+              pattern="[A-Za-z]+( [A-Za-z]+)*"
               placeholder="Full Name"
               value={name}
               onChange={(e) => setName(e.target.value)}

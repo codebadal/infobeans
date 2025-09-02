@@ -65,7 +65,7 @@ export default function GeminiAIComponent() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="w-80 h-96 bg-white border rounded-xl shadow-xl flex flex-col">
+        <div className="w-[460px] h-[540px] bg-white border rounded-xl shadow-xl flex flex-col">
           {/* Header */}
           <div className="flex justify-between items-center bg-red-700 text-white px-3 py-2 rounded-t-xl">
             <span className="font-semibold">

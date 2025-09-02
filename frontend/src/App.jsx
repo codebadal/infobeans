@@ -1,5 +1,4 @@
-// css change -------------------- 
-
+// css change --------------------
 
 import { Routes, Route, Link } from "react-router-dom";
 import NavBar from "./components/NavBar.jsx";
@@ -16,9 +15,11 @@ import DashboardAdmin from "./pages/DashboardAdmin.jsx";
 import Batches from "./pages/Batches.jsx";
 import CommunityInitiatives from "./components/community.jsx";
 import Footer from "./components/footer.jsx";
-import About from "./pages/About.jsx";
+// import About from "./pages/About.jsx";
 import GeminiAIComponent from "./pages/ai.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
+import { useEffect, useState } from "react";
+import About from "./pages/aboutPage/About.jsx";
 
 export default function App() {
   return (
@@ -33,10 +34,10 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           {/* new .............. */}
-          <Route path="/verify-email" element={<VerifyEmail />} />  
+          <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/forgot" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/about" element={<About/>}/>
+          <Route path="/about" element={<About />} />
           <Route
             path="/student"
             element={
@@ -78,7 +79,6 @@ export default function App() {
               </Protected>
             }
           />
-          
         </Routes>
       </main>
     </div>
@@ -86,52 +86,152 @@ export default function App() {
 }
 
 function Home() {
+  const images = ["group1.png", "gru/gr3.png", "gru/gr4.png", "gru/gr5.png"];
+  const [current, setCurrent] = useState(0);
+
+  // Auto play every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [images.length]);
+
+  // return (
+  //   <div className="flex flex-col items-center text-center space-y-8">
+  //     {/* Full Width Banner Image */}
+  //     {/* <img
+  //       src="/group1.png"
+  //       alt="img1"
+  //       className="w-screen h-[400px] object-cover shadow-md brightness-95 hover:brightness-100 transition duration-500"
+  //     /> */}
+
+  //     <div className="relative w-full max-w-4xl mx-auto mb-10">
+  //       <div className="overflow-hidden relative h-64 md:h-96 rounded-lg">
+  //         {images.map((src, index) => (
+  //           <div
+  //             key={index}
+  //             className={`absolute inset-0 transition-opacity duration-1000 ${
+  //               index === current ? "opacity-100" : "opacity-0"
+  //             }`}
+  //           >
+  //             <img
+  //               src={src}
+  //               alt={`Slide ${index + 1}`}
+  //               className="w-full h-full object-cover"
+  //             />
+  //           </div>
+  //         ))}
+  //       </div>
+
+        
+        
+  //     </div>
+
+  //     {/* Info Card */}
+  //     <div
+  //       className="bg-white border border-gray-200 shadow-lg rounded-2xl p-10 max-w-2xl -mt-20 relative z-10 
+  //                 transform transition duration-500 hover:scale-105 hover:shadow-xl hover:shadow-red-200"
+  //     >
+  //       <h2 className="text-3xl font-bold text-red-500 mb-4 tracking-wide hover:text-red-600 transition duration-300">
+  //         InfoBeans Foundation
+  //       </h2>
+  //       <p className="text-gray-700 leading-relaxed hover:text-gray-900 transition duration-300">
+  //         We believe in steady contributions to the environment and society that
+  //         we live in. As a global technology leader, InfoBeans is committed to
+  //         increase digital literacy and create a sustainable and self-reliant
+  //         community.
+  //       </p>
+
+  //       {/* Links */}
+  //       <div className="mt-8 flex justify-center gap-6">
+  //         <Link
+  //           to="/login"
+  //           className="px-6 py-2.5 rounded-md font-medium bg-red-700 text-white shadow-md hover:shadow-lg hover:shadow-red-300 
+  //                  transform hover:-translate-y-1 transition duration-300"
+  //         >
+  //           Login
+  //         </Link>
+  //         <Link
+  //           to="/register"
+  //           className="px-6 py-2.5 rounded-md font-medium bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400 
+  //                  transform hover:-translate-y-1 transition duration-300"
+  //         >
+  //           Register
+  //         </Link>
+  //       </div>
+  //     </div>
+
+  //     <CommunityInitiatives />
+  //     <GeminiAIComponent />
+  //     <Footer />
+  //   </div>
+  // );
+
+
+
+
+
   return (
-    <div className="flex flex-col items-center text-center space-y-8">
-      {/* Full Width Banner Image */}
-      <img
-        src="/group1.png"
-        alt="img1"
-        className="w-screen h-[400px] object-cover shadow-md brightness-95 hover:brightness-100 transition duration-500"
-      />
-
-      {/* Info Card */}
-      <div
-        className="bg-white border border-gray-200 shadow-lg rounded-2xl p-10 max-w-2xl -mt-20 relative z-10 
-                  transform transition duration-500 hover:scale-105 hover:shadow-xl hover:shadow-red-200"
-      >
-        <h2 className="text-3xl font-bold text-red-500 mb-4 tracking-wide hover:text-red-600 transition duration-300">
-          InfoBeans Foundation
-        </h2>
-        <p className="text-gray-700 leading-relaxed hover:text-gray-900 transition duration-300">
-          We believe in steady contributions to the environment and society that
-          we live in. As a global technology leader, InfoBeans is committed to
-          increase digital literacy and create a sustainable and self-reliant
-          community.
-        </p>
-
-        {/* Links */}
-        <div className="mt-8 flex justify-center gap-6">
-          <Link
-            to="/login"
-            className="px-6 py-2.5 rounded-md font-medium bg-red-700 text-white shadow-md hover:shadow-lg hover:shadow-red-300 
-                   transform hover:-translate-y-1 transition duration-300"
+  <div className="flex flex-col items-center text-center space-y-8">
+    {/* Full Width Slider */}
+    <div className="relative w-full mb-10">
+      <div className="overflow-hidden relative h-64 md:h-96">
+        {images.map((src, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === current ? "opacity-100" : "opacity-0"
+            }`}
           >
-            Login
-          </Link>
-          <Link
-            to="/register"
-            className="px-6 py-2.5 rounded-md font-medium bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400 
-                   transform hover:-translate-y-1 transition duration-300"
-          >
-            Register
-          </Link>
-        </div>
+            <img
+              src={src}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
       </div>
-
-      <CommunityInitiatives />
-      <GeminiAIComponent/>
-      <Footer />
     </div>
-  );
+
+    {/* Info Card */}
+    <div
+      className="bg-white border border-gray-200 shadow-lg rounded-2xl p-10 max-w-2xl -mt-20 relative z-10 
+                transform transition duration-500 hover:scale-105 hover:shadow-xl hover:shadow-red-200"
+    >
+      <h2 className="text-3xl font-bold text-red-500 mb-4 tracking-wide hover:text-red-600 transition duration-300">
+        InfoBeans Foundation
+      </h2>
+      <p className="text-gray-700 leading-relaxed hover:text-gray-900 transition duration-300">
+        We believe in steady contributions to the environment and society that
+        we live in. As a global technology leader, InfoBeans is committed to
+        increase digital literacy and create a sustainable and self-reliant
+        community.
+      </p>
+
+      {/* Links */}
+      <div className="mt-8 flex justify-center gap-6">
+        <Link
+          to="/login"
+          className="px-6 py-2.5 rounded-md font-medium bg-red-700 text-white shadow-md hover:shadow-lg hover:shadow-red-300 
+                 transform hover:-translate-y-1 transition duration-300"
+        >
+          Login
+        </Link>
+        <Link
+          to="/register"
+          className="px-6 py-2.5 rounded-md font-medium bg-gray-600 text-white shadow-md hover:shadow-lg hover:shadow-gray-400 
+                 transform hover:-translate-y-1 transition duration-300"
+        >
+          Register
+        </Link>
+      </div>
+    </div>
+
+    <CommunityInitiatives />
+    <GeminiAIComponent />
+    <Footer />
+  </div>
+);
+
 }
